@@ -1,3 +1,7 @@
+[build-system]
+requires = ["hatchling>=1.26.0"]
+build-backend = "hatchling.build"
+
 [project]
 name = "influencerflow"
 version = "0.1.0"
@@ -8,12 +12,20 @@ authors = [
 requires-python = ">=3.9"
 readme = "README.md"
 license = {text = "MIT"}
-
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
 dependencies = [
     "fastapi>=0.100.0",
     "uvicorn[standard]>=0.22.0",
     "sqlalchemy>=2.0.0",
-    "pydantic[email]>=2.0.0",
+    "pydantic[email]>=2.0.0,<2.1.0",
     "pydantic-settings>=2.0.0",
     "alembic>=1.11.0",
     "psycopg2-binary>=2.9.6",
@@ -24,6 +36,7 @@ dependencies = [
     "psycopg2>=2.9.10",
     "faker>=37.3.0",
     "supabase>=2.15.2",
+    "numpy>=1.22.0,<2.0.0",
 ]
 
 [project.optional-dependencies]
@@ -35,9 +48,10 @@ dev = [
     "pre-commit>=3.3.2",
 ]
 
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+[project.urls]
+Homepage = "https://influencerflow.com"
+Repository = "https://github.com/influencerflow/influencerflow"
+Documentation = "https://docs.influencerflow.com"
 
 [tool.hatch.build.targets.wheel]
 packages = ["app"]
@@ -58,3 +72,6 @@ line_length = 100
 [tool.pytest]
 testpaths = ["tests"]
 python_files = "test_*.py"
+
+[tool.uv]
+python-preference = "managed"
