@@ -1,0 +1,100 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+scripts/
+
+# Virtual Environment
+.env
+.env.*
+!.env.example
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.python-version.override
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Package managers
+.uv/
+uv.lock
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Tests
+.pytest_cache/
+.coverage
+htmlcov/
+coverage/
+.tox/
+nosetests.xml
+coverage.xml
+*.cover
+
+# Database
+*.db
+*.sqlite3
+influencerflow.db
+# Migrations
+# Don't ignore migrations directory itself, only ignore specific generated files if needed
+# migrations/versions/ 
+
+# Documentation build
+docs/_build/
+docs/site/
+
+# Application specific
+.backup
+*.bak
+*.tmp
+*.temp
+op.txt
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Docker
+docker-compose.override.yml
+
+# Local development
+local_settings.py
+
+# Secrets and keys
+*.pem
+*.key
+.env copy
+
+# Temporary files
+.temp/
+.tmp/ 
