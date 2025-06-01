@@ -377,4 +377,38 @@ class OutreachService:
             return await SupabaseService.get_outreach_logs(creator_id=influencer_id, limit=100)
         except Exception as e:
             logger.error(f"Error getting outreach logs by influencer: {str(e)}")
-            return [] 
+            return []
+    
+    @staticmethod
+    async def create_simple_outreach(data: outreach_schemas.SimpleOutreachCreate) -> Dict[str, Any]:
+        """
+        Create a new outreach log with just campaign_id and creator_id,
+        automatically setting other required fields
+        """
+        try:
+            # Create a standard outreach with default values
+            outreach_data = outreach_schemas.OutreachCreate(
+                campaign_id=data.campaign_id,
+                creator_id=data.creator_id,
+                channel="initial",
+                message_type="outreach",
+                content={},
+                status="initialized"
+            )
+            
+            # Convert to dict and add ID
+            outreach_dict = outreach_data.model_dump()
+            outreach_dict["id"] = str(uuid.uuid4())
+            
+            # Create the outreach log
+            log = await SupabaseService.create_outreach_log(outreach_dict)
+            
+            if not log:
+                raise HTTPException(status_code=500, detail="Failed to create outreach")
+            
+            # Return just the ID for simplicity
+            return {"outreach_id": log["id"]}
+            
+        except Exception as e:
+            logger.error(f"Error creating simple outreach: {e}")
+            raise HTTPException(status_code=500, detail="Error creating outreach") 

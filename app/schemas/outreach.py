@@ -20,6 +20,12 @@ class OutreachCreate(BaseModel):
     status: str
 
 
+# Schema for simplified outreach creation (only needs campaign_id and creator_id)
+class SimpleOutreachCreate(BaseModel):
+    campaign_id: str
+    creator_id: str
+
+
 # Schema for updating an existing outreach log
 class OutreachUpdate(BaseModel):
     channel: Optional[str] = None

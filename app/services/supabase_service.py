@@ -310,10 +310,13 @@ class SupabaseService:
             return None
     
     @staticmethod
-    async def create_outreach_log(log_data: outreach_schemas.OutreachCreate) -> Optional[Dict[str, Any]]:
+    async def create_outreach_log(log_data: Union[Dict[str, Any], outreach_schemas.OutreachCreate]) -> Optional[Dict[str, Any]]:
         """Create a new outreach log"""
         try:
-            response = supabase.table("outreach_logs").insert(log_data.model_dump()).execute()
+            # Convert to dict if it's a Pydantic model
+            data_dict = log_data.model_dump() if hasattr(log_data, 'model_dump') else log_data
+            
+            response = supabase.table("outreach_logs").insert(data_dict).execute()
             if response.data and len(response.data) > 0:
                 return response.data[0]
             return None

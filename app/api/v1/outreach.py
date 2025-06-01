@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Path, status, Resp
 from typing import List, Dict, Any, Optional
 from sqlalchemy.orm import Session
 
-from app.schemas.outreach import OutreachCreate, OutreachUpdate, SendEmail, OutreachDashboard, InitiateCallRequest, InitiateCallResponse, CallAnalysisResponse, SyncConversationsRequest, SyncConversationsResponse
+from app.schemas.outreach import OutreachCreate, OutreachUpdate, SendEmail, OutreachDashboard, InitiateCallRequest, InitiateCallResponse, CallAnalysisResponse, SyncConversationsRequest, SyncConversationsResponse, SimpleOutreachCreate
 from app.services.outreach_service import OutreachService
 from app.services.elevenlabs_service import ElevenLabsService
 from app.services.supabase_service import SupabaseService
@@ -13,13 +13,16 @@ router = APIRouter()
 
 @router.post("/", response_model=Dict[str, Any])
 async def create_outreach_log(
-    log_data: OutreachCreate,
+    data: SimpleOutreachCreate,
     outreach_service: OutreachService = Depends()
 ):
     """
-    Create a new outreach log
+    Create a new outreach log with minimal information.
+    Only campaign_id and creator_id are required.
+    The status will be automatically set to 'initialized'.
+    Returns the outreach_id.
     """
-    return await outreach_service.create_outreach_log(log_data)
+    return await outreach_service.create_simple_outreach(data)
 
 
 @router.get("/", response_model=List[Dict[str, Any]])
