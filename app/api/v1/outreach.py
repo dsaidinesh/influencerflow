@@ -123,14 +123,22 @@ async def get_outreach_by_creator(
 async def initiate_influencer_call(
     request: InitiateCallRequest,
     elevenlabs_service: ElevenLabsService = Depends(),
-    supabase_service: SupabaseService = Depends()
+    outreach_service: OutreachService = Depends()
 ):
     """Initiate outbound call to influencer via ElevenLabs + Twilio"""
     
     try:
-        # Get campaign and influencer data
-        campaign = await SupabaseService.get_campaign(request.campaign_id)
-        creator = await SupabaseService.get_creator(request.creator_id)
+        # Get outreach log
+        outreach_log = await outreach_service.get_outreach_log(request.outreach_id)
+        if not outreach_log:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Outreach log with ID {request.outreach_id} not found"
+            )
+            
+        # Get campaign and creator data
+        campaign = await SupabaseService.get_campaign(outreach_log["campaign_id"])
+        creator = await SupabaseService.get_creator(outreach_log["creator_id"])
         
         if not campaign or not creator:
             raise HTTPException(
@@ -138,11 +146,9 @@ async def initiate_influencer_call(
                 detail="Campaign or creator not found"
             )
         
-        # Get phone number from request or creator data
+        # Get phone number from request
         creator_phone = request.phone_number
         if not creator_phone:
-            # In a real application, you'd store phone numbers
-            # This is just a placeholder - you'll need to add phone fields to your creator model
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Creator phone number required"
@@ -155,10 +161,9 @@ async def initiate_influencer_call(
             creator_data=creator
         )
         
-        # Create outreach log entry in Supabase
-        outreach_log = await SupabaseService.create_outreach_elevenlabs_entry(
-            campaign_id=request.campaign_id,
-            influencer_id=request.creator_id,
+        # Update the outreach log with call information
+        updated_log = await outreach_service.update_outreach_with_call_info(
+            outreach_id=request.outreach_id,
             conversation_id=call_result["conversation_id"],
             twilio_call_sid=call_result.get("callSid", "")
         )
@@ -166,7 +171,7 @@ async def initiate_influencer_call(
         return {
             "success": True,
             "conversation_id": call_result["conversation_id"],
-            "outreach_id": outreach_log.get("id") if outreach_log else None,
+            "outreach_id": request.outreach_id,
             "call_status": "initiated",
             "message": "Call initiated successfully"
         }

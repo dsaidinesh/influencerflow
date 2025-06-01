@@ -93,8 +93,7 @@ class CallTranscript(BaseModel):
 # ElevenLabs-specific request models
 class InitiateCallRequest(BaseModel):
     """Request model for initiating an outbound call via ElevenLabs"""
-    campaign_id: str
-    creator_id: str
+    outreach_id: str
     phone_number: str
 
 

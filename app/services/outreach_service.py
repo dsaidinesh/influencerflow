@@ -411,4 +411,42 @@ class OutreachService:
             
         except Exception as e:
             logger.error(f"Error creating simple outreach: {e}")
-            raise HTTPException(status_code=500, detail="Error creating outreach") 
+            raise HTTPException(status_code=500, detail="Error creating outreach")
+    
+    @staticmethod
+    async def update_outreach_with_call_info(
+        outreach_id: str, 
+        conversation_id: str, 
+        twilio_call_sid: str
+    ) -> Dict[str, Any]:
+        """
+        Update an existing outreach record with call information
+        """
+        try:
+            # Check if outreach log exists
+            existing_log = await SupabaseService.get_outreach_log(outreach_id)
+            if not existing_log:
+                raise HTTPException(status_code=404, detail=f"Outreach log with ID {outreach_id} not found")
+            
+            # Update the outreach log with call information
+            update_data = {
+                "channel": "call",
+                "status": "call_initiated",
+                "conversation_id": conversation_id,
+                "twilio_call_sid": twilio_call_sid,
+                "content": {
+                    "call_initiated_at": datetime.utcnow().isoformat(),
+                    "call_status": "initiated"
+                }
+            }
+            
+            updated_log = await SupabaseService.update_outreach_log(outreach_id, update_data)
+            if not updated_log:
+                raise HTTPException(status_code=500, detail=f"Failed to update outreach log {outreach_id}")
+            
+            return updated_log
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"Error updating outreach log with call info {outreach_id}: {e}")
+            raise HTTPException(status_code=500, detail=f"Error updating outreach log with call info {outreach_id}") 
