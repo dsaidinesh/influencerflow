@@ -6,7 +6,7 @@ services:
       curl -LsSf https://astral.sh/uv/install.sh | sh
       source $HOME/.cargo/env
       uv pip install -r uv.lock || uv pip install -e .
-    startCommand: python main.py
+    startCommand: uv run main.py
     envVars:
       - key: PYTHON_VERSION
         value: 3.9.0

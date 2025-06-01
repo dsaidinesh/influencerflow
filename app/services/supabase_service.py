@@ -1,4 +1,4 @@
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Union
 from app.core.supabase import supabase
 from app.schemas import creator as creator_schemas
 from app.schemas import campaign as campaign_schemas
@@ -172,10 +172,13 @@ class SupabaseService:
             return None
     
     @staticmethod
-    async def create_campaign(campaign_data: campaign_schemas.CampaignCreate) -> Optional[Dict[str, Any]]:
+    async def create_campaign(campaign_data: Union[Dict[str, Any], campaign_schemas.CampaignCreate]) -> Optional[Dict[str, Any]]:
         """Create a new campaign"""
         try:
-            response = supabase.table("campaigns").insert(campaign_data.model_dump()).execute()
+            # Convert to dict if it's a Pydantic model
+            data_dict = campaign_data.model_dump() if hasattr(campaign_data, 'model_dump') else campaign_data
+            
+            response = supabase.table("campaigns").insert(data_dict).execute()
             if response.data and len(response.data) > 0:
                 return response.data[0]
             return None

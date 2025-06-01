@@ -62,11 +62,13 @@ class CampaignService:
             # Set default values
             campaign_dict = campaign_data.model_dump()
             campaign_dict["id"] = str(uuid.uuid4())
+            campaign_dict["status"] = "draft"  # Set default status
+            campaign_dict["influencer_count"] = 0  # Set default influencer count
             campaign_dict["created_at"] = datetime.utcnow().isoformat()
             campaign_dict["updated_at"] = datetime.utcnow().isoformat()
             
             # Create campaign in database
-            campaign = await SupabaseService.create_campaign(CampaignCreate(**campaign_dict))
+            campaign = await SupabaseService.create_campaign(campaign_dict)
             if not campaign:
                 raise HTTPException(status_code=500, detail="Failed to create campaign")
             
