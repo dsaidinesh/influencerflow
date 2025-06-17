@@ -9,7 +9,7 @@ services:
     startCommand: uv run main.py
     envVars:
       - key: PYTHON_VERSION
-        value: 3.9.0
+        value: 3.9.13
       - key: DATABASE_URL
         sync: false
       - key: SUPABASE_URL
